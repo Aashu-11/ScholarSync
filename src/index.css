@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #10b981, #39ff14, #14b8a6, #a7f3d0);
+  --glass-effect: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+body {
+  @apply bg-background font-sans text-gray-800;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.glassmorphism {
+  @apply bg-glass bg-opacity-20 backdrop-blur-lg rounded-xl border border-white border-opacity-20 shadow-glass;
+}
+
+.neon-border {
+  @apply border border-neon shadow-neon transition-all duration-300;
+}
+
+.neon-text {
+  @apply text-neon;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.7), 0 0 10px rgba(57, 255, 20, 0.5);
+}
+
+.primary-gradient {
+  background: var(--primary-gradient);
+  background-size: 300% 300%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.primary-gradient-text {
+  background: var(--primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 300% 300%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+.button-glow {
+  @apply transition-all duration-300;
+}
+
+.button-glow:hover {
+  @apply shadow-neon;
+  transform: translateY(-2px);
+}
+
+.animated-bg {
+  background: url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.7), rgba(57, 255, 20, 0.4));
+  z-index: 1;
+}
+
+.animated-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/src/assets/grid.svg');
+  background-size: cover;
+  opacity: 0.2;
+  z-index: 2;
+  animation: pulse-grid 5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-grid {
+  0% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  backface-visibility: hidden;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
