@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Award, Notebook as Robot, FileText, Calendar, MessageSquare } from 'lucide-react';
-import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import Card, { CardContent } from '../components/ui/Card';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,28 +11,20 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { loginWithGoogle } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleSignIn = async () => {
     setError('');
     setIsLoading(true);
-
     try {
-      const success = await login(username, password);
-      if (success) {
-        onLogin();
-        navigate('/dashboard');
-      } else {
-        setError('Invalid username or password');
-      }
+      await loginWithGoogle();
+      onLogin();
+      navigate('/dashboard');
     } catch (err) {
-      setError('An error occurred during login');
+      setError('Failed to sign in with Google');
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +60,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex flex-col md:flex-row">
-      {/* Left side - Login form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -81,87 +71,34 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <Sparkles className="text-primary-600 mr-2" size={32} />
             <h1 className="text-3xl font-bold text-gray-900">ScholarSync</h1>
           </div>
-          
           <Card className="w-full">
             <CardContent>
               <h2 className="text-2xl font-semibold text-center mb-6">Welcome Back</h2>
-              
               {error && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4">
                   {error}
                 </div>
               )}
-              
-              <form onSubmit={handleSubmit}>
-                <Input
-                  label="Username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  fullWidth
-                  required
-                  placeholder="Enter your username"
+              <Button
+                onClick={handleGoogleSignIn}
+                fullWidth
+                isLoading={isLoading}
+                className="flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="Google Logo"
+                  className="w-5 h-5 mr-2"
                 />
-                
-                <Input
-                  label="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  fullWidth
-                  required
-                  placeholder="Enter your password"
-                />
-                
-                <div className="mt-2 mb-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <input
-                        id="remember-me"
-                        name="remember-me"
-                        type="checkbox"
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                        Remember me
-                      </label>
-                    </div>
-                    
-                    <div className="text-sm">
-                      <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                        Forgot password?
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                
-                <Button
-                  type="submit"
-                  fullWidth
-                  isLoading={isLoading}
-                >
-                  Sign In
-                </Button>
-                
-                <div className="mt-4 text-center">
-                  <span className="text-sm text-gray-600">
-                    Don't have an account?{' '}
-                    <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                      Sign up
-                    </a>
-                  </span>
-                </div>
-              </form>
+                Sign in with Google
+              </Button>
+              <div className="mt-6 text-center text-sm text-gray-600">
+                <p>By signing in, you agree to our Terms and Privacy Policy.</p>
+              </div>
             </CardContent>
           </Card>
-          
-          <div className="mt-4 text-center text-sm text-gray-600">
-            <p>Demo credentials: username / password</p>
-          </div>
         </motion.div>
       </div>
-      
-      {/* Right side - Features overview */}
       <div className="w-full md:w-1/2 bg-primary-600 text-white p-8 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0 }}
@@ -173,7 +110,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <p className="text-lg mb-8 text-primary-100">
             ScholarAI uses cutting-edge artificial intelligence to help you find, apply for, and win scholarships that match your unique profile.
           </p>
-          
           <div className="space-y-6">
             {features.map((feature, index) => (
               <motion.div

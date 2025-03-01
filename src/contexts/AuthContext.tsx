@@ -1,38 +1,70 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
+import { auth, googleProvider } from "../firebaseConfig";
+
+// Define the user type with `name`, `email`, and `photoURL`
+interface UserType {
+  name: string;
+  email: string;
+  photoURL: string;
+}
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
-  user: { name: string; email: string } | null;
+  user: UserType | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<UserType | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
-    // Mock authentication - in a real app, this would call an API
-    if (username === 'username' && password === 'password') {
-      setIsAuthenticated(true);
+  // Function to log in with Google
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const loggedInUser = result.user;
       setUser({
-        name: 'Alex Johnson',
-        email: 'alex.johnson@example.com'
+        name: loggedInUser.displayName || "User",
+        email: loggedInUser.email || "",
+        photoURL: loggedInUser.photoURL || "/default-avatar.png", // Default avatar if missing
       });
-      return true;
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
     }
-    return false;
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
+  // Function to log out
+  const logout = async () => {
+    await signOut(auth);
     setUser(null);
+    setIsAuthenticated(false);
   };
+
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
+      if (firebaseUser) {
+        setUser({
+          name: firebaseUser.displayName || "User",
+          email: firebaseUser.email || "",
+          photoURL: firebaseUser.photoURL || "/default-avatar.png",
+        });
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, loginWithGoogle, logout, user }}>
       {children}
     </AuthContext.Provider>
   );
@@ -40,8 +72,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

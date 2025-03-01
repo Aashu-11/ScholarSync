@@ -10,8 +10,8 @@ import Documents from './pages/Documents';
 import Sidebar from './components/Sidebar';
 import { AuthProvider } from './contexts/AuthContext';
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -20,26 +20,45 @@ function App() {
   return (
     <AuthProvider>
       <div className="flex">
+        {isLoggedIn && <Sidebar />}
         <div className="flex-1 overflow-hidden">
           <Routes>
-            {!isLoggedIn ? (
-              <Route path="*" element={<Login onLogin={handleLogin} />} />
-            ) : (
-              <>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/scholarships" element={<ScholarshipFinder />} />
-                <Route path="/application-generator" element={<ApplicationGenerator />} />
-                <Route path="/coach" element={<ScholarshipCoach />} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/documents" element={<Documents />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </>
-            )}
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route
+              path="/"
+              element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/scholarships"
+              element={isLoggedIn ? <ScholarshipFinder /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/application-generator"
+              element={
+                isLoggedIn ? <ApplicationGenerator /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/coach"
+              element={isLoggedIn ? <ScholarshipCoach /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/community"
+              element={isLoggedIn ? <Community /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/documents"
+              element={isLoggedIn ? <Documents /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to={isLoggedIn ? "/" : "/login"} replace />}
+            />
           </Routes>
         </div>
       </div>
     </AuthProvider>
   );
-}
+};
 
 export default App;
