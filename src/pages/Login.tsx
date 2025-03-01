@@ -83,12 +83,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 onClick={handleGoogleSignIn}
                 fullWidth
                 isLoading={isLoading}
-                className="flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-100"
+                className="flex items-center justify-center bg-white border border-gray-300 text-black hover:bg-gray-100"
               >
                 <img
                   src="https://www.svgrepo.com/show/475656/google-color.svg"
                   alt="Google Logo"
                   className="w-5 h-5 mr-2"
+                  
                 />
                 Sign in with Google
               </Button>

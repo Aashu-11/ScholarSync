@@ -7,7 +7,6 @@ import ApplicationGenerator from './pages/ApplicationGenerator';
 import ScholarshipCoach from './pages/AICoach';
 import Community from './pages/Community';
 import Documents from './pages/Documents';
-import Sidebar from './components/Sidebar';
 import { AuthProvider } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -20,7 +19,6 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <div className="flex">
-        {isLoggedIn && <Sidebar />}
         <div className="flex-1 overflow-hidden">
           <Routes>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
