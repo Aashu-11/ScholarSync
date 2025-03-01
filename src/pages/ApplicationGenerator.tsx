@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
 import Sidebar from '../components/Sidebar';
+import { generateEssayWithLlama, generateFeedbackWithLlama, enhanceEssayWithLlama } from '../services/llama';
+import { downloadPDF } from '../utils/pdfGenerator';
 
 const ApplicationGenerator: React.FC = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -28,70 +30,66 @@ const ApplicationGenerator: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionComplete, setSubmissionComplete] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isEnhancingEssay, setIsEnhancingEssay] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   
   const essayRef = useRef<HTMLDivElement>(null);
   
-  // Mock essay generation
-  const generateEssay = () => {
+  // Generate essay using Llama 3.1 Nemotron
+  const generateEssay = async () => {
     if (!scholarshipName || !essayPrompt) return;
     
     setGeneratingEssay(true);
     setEssayContent('');
     
-    // Simulate AI generating content
-    setTimeout(() => {
-      const generatedEssay = `Throughout my academic journey, I have consistently pursued excellence in the field of computer science while maintaining a strong commitment to community service. As a student at Stanford University with a 3.8 GPA, I have developed a deep understanding of computational thinking and problem-solving that extends beyond the classroom.
-
-My leadership role as President of the Robotics Club has taught me invaluable lessons in team management and innovation. Under my guidance, our team developed an autonomous delivery robot that now assists mobility-impaired students on campus. This project not only showcased my technical abilities but also my dedication to creating technology that serves humanitarian purposes.
-
-My volunteer work at the Local Food Bank has opened my eyes to the challenges faced by underserved communities. Every Saturday morning, I help organize food distribution and develop digital systems to optimize inventory management. This experience has reinforced my belief that technology should be accessible to all and used to address real-world problems.
-
-The scholarship offered by ${scholarshipName} aligns perfectly with my academic goals and personal values. The financial support would allow me to focus more intensely on my studies and community initiatives without the burden of excessive student loans. Moreover, being associated with such a prestigious organization would provide networking opportunities that could further enhance my professional development.
-
-In conclusion, I am not merely seeking financial assistance; I am looking for a partnership that will enable me to continue growing as a scholar, leader, and community member. I am confident that with the support of ${scholarshipName}, I can further amplify my positive impact on society through innovative technological solutions and dedicated service.`;
+    try {
+      const generatedEssay = await generateEssayWithLlama({
+        scholarshipName,
+        essayPrompt,
+        personalInfo
+      });
       
       setEssayContent(generatedEssay);
+    } catch (error) {
+      console.error('Error generating essay:', error);
+      // Show error message to user
+    } finally {
       setGeneratingEssay(false);
-    }, 3000);
+    }
   };
   
-  // Mock feedback generation
-  const generateFeedback = () => {
+  // Generate feedback using Llama 3.1 Nemotron
+  const generateFeedback = async () => {
+    if (!essayContent) return;
+    
     setIsGeneratingFeedback(true);
     
-    // Simulate AI analyzing essay
-    setTimeout(() => {
-      const feedback = `
-      <div class="space-y-4">
-        <div>
-          <h4 class="font-medium text-green-600">Strengths:</h4>
-          <ul class="list-disc pl-5 space-y-1 text-sm">
-            <li>Strong opening that establishes academic credentials</li>
-            <li>Excellent connection between technical skills and community impact</li>
-            <li>Clear examples of leadership and initiative</li>
-            <li>Personalized connection to the scholarship provider</li>
-          </ul>
-        </div>
-        
-        <div>
-          <h4 class="font-medium text-amber-600">Suggestions for Improvement:</h4>
-          <ul class="list-disc pl-5 space-y-1 text-sm">
-            <li>Consider adding more specific metrics of success (e.g., "increased efficiency by 30%")</li>
-            <li>Expand on future goals and how this scholarship specifically enables them</li>
-            <li>Add a more memorable closing statement that reinforces your unique value</li>
-          </ul>
-        </div>
-        
-        <div class="bg-blue-50 p-3 rounded-lg">
-          <h4 class="font-medium text-blue-600">AI Enhancement Suggestions:</h4>
-          <p class="text-sm">Click "Enhance Essay" to implement these improvements automatically while maintaining your authentic voice.</p>
-        </div>
-      </div>
-      `;
-      
+    try {
+      const feedback = await generateFeedbackWithLlama(essayContent);
       setEssayFeedback(feedback);
+    } catch (error) {
+      console.error('Error generating feedback:', error);
+      // Show error message to user
+    } finally {
       setIsGeneratingFeedback(false);
-    }, 2500);
+    }
+  };
+  
+  // Enhance essay using Llama 3.1 Nemotron
+  const enhanceEssay = async () => {
+    if (!essayContent || !essayFeedback) return;
+    
+    setIsEnhancingEssay(true);
+    
+    try {
+      const enhancedEssay = await enhanceEssayWithLlama(essayContent, essayFeedback);
+      setEssayContent(enhancedEssay);
+    } catch (error) {
+      console.error('Error enhancing essay:', error);
+      // Show error message to user
+    } finally {
+      setIsEnhancingEssay(false);
+    }
   };
   
   const copyToClipboard = () => {
@@ -124,6 +122,27 @@ In conclusion, I am not merely seeking financial assistance; I am looking for a 
     setEssayContent('');
     setEssayFeedback('');
     setSubmissionComplete(false);
+  };
+  
+  // Handle PDF download
+  const handleDownloadPDF = async () => {
+    if (!essayContent) return;
+    
+    setIsGeneratingPDF(true);
+    
+    try {
+      await downloadPDF({
+        scholarshipName,
+        essayPrompt,
+        personalInfo,
+        essayContent
+      }, `${scholarshipName.replace(/\s+/g, '-').toLowerCase()}-application.pdf`);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      // Show error message to user
+    } finally {
+      setIsGeneratingPDF(false);
+    }
   };
   
   // Confetti effect
@@ -617,10 +636,16 @@ In conclusion, I am not merely seeking financial assistance; I am looking for a 
                             )}
                           </button>
                           <button 
+                            onClick={handleDownloadPDF}
                             className="p-2 glassmorphism hover:bg-gray-100 rounded-lg text-sm flex items-center"
                             title="Download as PDF"
+                            disabled={isGeneratingPDF}
                           >
-                            <Download className="w-4 h-4" />
+                            {isGeneratingPDF ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Download className="w-4 h-4" />
+                            )}
                           </button>
                         </div>
                       </div>
@@ -667,9 +692,22 @@ In conclusion, I am not merely seeking financial assistance; I am looking for a 
                           <div dangerouslySetInnerHTML={{ __html: essayFeedback }} />
                           
                           <div className="flex justify-end mt-4">
-                            <button className="px-4 py-2 primary-gradient text-white rounded-lg text-sm font-medium flex items-center button-glow">
-                              <Zap className="w-4 h-4 mr-2" />
-                              Enhance Essay
+                            <button 
+                              onClick={enhanceEssay}
+                              className="px-4 py-2 primary-gradient text-white rounded-lg text-sm font-medium flex items-center button-glow"
+                              disabled={isEnhancingEssay}
+                            >
+                              {isEnhancingEssay ? (
+                                <>
+                                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                                  Enhancing...
+                                </>
+                              ) : (
+                                <>
+                                  <Zap className="w-4 h-4 mr-2" />
+                                  Enhance Essay
+                                </>
+                              )}
                             </button>
                           </div>
                         </motion.div>
@@ -756,9 +794,22 @@ In conclusion, I am not merely seeking financial assistance; I am looking for a 
                         <RefreshCw className="w-5 h-5 mr-2" />
                         Create New Application
                       </button>
-                      <button className="px-6 py-3 primary-gradient text-white rounded-lg font-medium flex items-center justify-center button-glow">
-                        <FileText className="w-5 h-5 mr-2" />
-                        View All Applications
+                      <button 
+                        onClick={handleDownloadPDF}
+                        className="px-6 py-3 primary-gradient text-white rounded-lg font-medium flex items-center justify-center button-glow"
+                        disabled={isGeneratingPDF}
+                      >
+                        {isGeneratingPDF ? (
+                          <>
+                            <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                            Generating PDF...
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="w-5 h-5 mr-2" />
+                            Download Application PDF
+                          </>
+                        )}
                       </button>
                     </div>
                   </motion.div>
