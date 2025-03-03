@@ -1,4 +1,3 @@
-// middleware/authMiddleware.js
 const admin = require('../config/firebase');
 const User = require('../models/User');
 
