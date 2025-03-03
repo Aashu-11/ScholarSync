@@ -5,6 +5,15 @@ require('dotenv').config();
 const documentRoutes = require('./routes/documentRoutes');
 const authRoutes = require('./routes/authRoutes');
 const scholarshipRoutes = require('./routes/scholarshipRoutes');
+const admin = require("firebase-admin");
+
+// Load credentials from Render environment variable
+const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 
 const app = express();
 app.use(cors());
