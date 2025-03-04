@@ -75,15 +75,19 @@ const AICoach: React.FC = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 ml-64 space-y-6 p-4 overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-3xl font-bold text-gray-900">AI Scholarship Coach</h1>
-          <p className="text-gray-600 mt-1">Get personalized guidance for your scholarship journey</p>
-        </motion.div>
+         <div className="lg:ml-[240px] p-4 md:p-8">
+                <motion.div 
+                  className="mb-8"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h1 className="text-3xl font-display font-bold primary-gradient-text">
+                  AI Scholarship Coach                  </h1>
+                  <p className="text-gray-600 mt-2">
+                  Get personalized guidance for your scholarship journey                  </p>
+                </motion.div>
+                
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Chat Area */}

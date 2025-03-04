@@ -132,14 +132,18 @@ const Documents: React.FC = () => {
     <div className="flex">
       <Sidebar /> {/* Include Sidebar component */}
       <div className="flex-1 ml-64 space-y-6 p-4 overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-3xl font-bold text-gray-900">Document Management</h1>
-          <p className="text-gray-600 mt-1">Organize and manage your scholarship documents</p>
-        </motion.div>
+        
+        <motion.div 
+                                      className="mb-8"
+                                      initial={{ opacity: 0, y: -20 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ duration: 0.5 }}
+                                    >
+                                      <h1 className="text-3xl font-display font-bold primary-gradient-text">
+                                      Document Management                </h1>
+                                      <p className="text-gray-600 mt-2">
+                                      Organize and manage your scholarship documents                                      </p>
+                                    </motion.div>
 
         {/* Search and Filters */}
         <Card>

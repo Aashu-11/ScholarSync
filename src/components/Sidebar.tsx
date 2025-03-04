@@ -43,7 +43,7 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex flex-col h-full p-4">
           <div className="flex items-center justify-between mb-8 p-2">
-            <h1 className="text-xl font-display font-bold primary-gradient-text">ScholarSync</h1>
+            <h1 className="text-xl font-display font-bold primary-gradient-text">ScholarNex</h1>
             <button onClick={toggleMobile}><X className="w-6 h-6 text-primary-600" /></button>
           </div>
 

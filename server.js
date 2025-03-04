@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 
 app.get("/api/scholarships", (req, res) => {
-  const filePath = "D:/Akshat/Projects/Scholarship/ScholarSync/scholarship.csv";
+  const filePath = "./public/scholarships.csv";
   const csvData = fs.readFileSync(filePath, "utf-8");
 
   Papa.parse(csvData, {

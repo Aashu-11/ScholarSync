@@ -69,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         >
           <div className="flex items-center justify-center mb-8">
             <Sparkles className="text-primary-600 mr-2" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">ScholarSync</h1>
+            <h1 className="text-3xl font-bold text-gray-900">ScholarNex</h1>
           </div>
           <Card className="w-full">
             <CardContent>
@@ -109,7 +109,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         >
           <h2 className="text-3xl font-bold mb-6">Revolutionize Your Scholarship Search</h2>
           <p className="text-lg mb-8 text-primary-100">
-            ScholarAI uses cutting-edge artificial intelligence to help you find, apply for, and win scholarships that match your unique profile.
+          ScholarNex uses cutting-edge artificial intelligence to help you find, apply for, and win scholarships that match your unique profile.
           </p>
           <div className="space-y-6">
             {features.map((feature, index) => (

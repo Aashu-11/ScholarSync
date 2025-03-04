@@ -228,16 +228,18 @@ const Community: React.FC = () => {
       <div className="pt-16 md:pt-0 md:pl-64">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-3xl font-bold text-gray-900">Community & Events</h1>
-              <p className="mt-1 text-sm text-gray-500">
-                Connect with other students and attend scholarship events
-              </p>
-            </motion.div>
+                    <motion.div 
+                      className="mb-8"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <h1 className="text-3xl font-display font-bold primary-gradient-text">
+                      Community & Events                      </h1>
+                      <p className="text-gray-600 mt-2">
+                      Connect with other students and attend scholarship events
+                      </p>
+                    </motion.div>
             
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}

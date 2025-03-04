@@ -165,17 +165,19 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h1 className="text-3xl font-bold text-gray-900">Welcome back, Alex!</h1>
-              <p className="mt-1 text-sm text-gray-500">
-                Here's what's happening with your scholarship applications
-              </p>
-            </motion.div>
             
+                            <motion.div 
+                              className="mb-8"
+                              initial={{ opacity: 0, y: -20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              <h1 className="text-3xl font-display font-bold primary-gradient-text">
+                              Welcome back                 </h1>
+                              <p className="text-gray-600 mt-2">
+                              Here's what's happening with your scholarship applications
+                              </p>
+                            </motion.div>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
